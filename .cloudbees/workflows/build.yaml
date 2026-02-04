@@ -1,0 +1,44 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: build
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+jobs:
+  test:
+    outputs:
+      CODE_COVERAGE: ${{ steps.RunUnitTest.outputs.CODE_COVERAGE }}
+    steps:
+      - uses: cloudbees-io/checkout@v1
+        name: Get source code
+      - name: Run unit tests
+        id: RunUnitTest
+        kind: test
+        uses: docker://node:lts
+        run: |
+          npm ci
+          npm run test:unit
+          npx jest --coverage >> $CLOUDBEES_OUTPUTS/CODE_COVERAGE
+      - name: Publish test results
+        uses: cloudbees-io/publish-test-results@v1
+        with:
+          test-type: JUnit
+          folder-name: ${{ cloudbees.workspace }}/junit.xml
+      - name: Publish evidence
+        uses: cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Test code coverage
+            ${{ steps.RunUnitTest.outputs.CODE_COVERAGE }}
+          format: MARKDOWN
+  build:
+    uses: TARGET_ORG/PROJECT_NAME-workflows/container-build.yaml
+    vars: inherit
+    secrets: inherit
+    with:
+      appName: hackers-web
+      versionStart: "1.0"
+      repo: TARGET_ORG/PROJECT_NAME-web
+    needs: test

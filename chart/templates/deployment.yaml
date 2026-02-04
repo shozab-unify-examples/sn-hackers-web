@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-hackers-web
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+      - name: ecr-registry
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.url }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: VUE_APP_API_URL
+              value: {{ .Values.config.apiUrl | quote }}
+            - name: VUE_APP_FM_KEY
+              value: {{ .Values.config.fmKey | quote }}
+            - name: VUE_APP_AUTH_URL
+              value: {{ .Values.config.authUrl | quote }}
+            - name: USE_VPC
+              value: "{{ .Values.config.useVPC }}"
+            - name: FM_INSTANCE
+              value: {{ .Values.config.fmInstance | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http 

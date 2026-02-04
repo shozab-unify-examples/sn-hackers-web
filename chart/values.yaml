@@ -1,0 +1,27 @@
+image:
+  url: ""
+  pullPolicy: IfNotPresent
+
+hostname: "" # Application hostname for ingress
+
+config:
+  apiUrl: "" # API URL
+  fmKey: "" # Feature Management key
+  authUrl: "" # Auth service URL
+  useVPC: false
+  fmInstance: "cloudbees.io"
+
+ingress:
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+replicaCount: 1
