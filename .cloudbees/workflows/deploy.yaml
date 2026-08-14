@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: cloudbees-io/checkout@v1
         with:
-          repository: cb-golden-demo-org/sd-hackers-web
+          repository: shozab-unify-examples/sn-hackers-web
       - uses: cloudbees-days/setup-kubeconfig
         name: Set kubeconfig
         with:
@@ -31,16 +31,16 @@ jobs:
         uses: cloudbees-io/helm-install@v1
         with:
           chart-location: ${{ cloudbees.workspace }}/chart
-          release-name: sd-hackers-web
+          release-name: sn-hackers-web
           namespace: ${{ vars.namespace }}
           values: |
             image:
               url: ${{ inputs.artifact-url }}
-            hostname: sd-hackers-web.${{ inputs.environment }}.preview.cb-demos.io
+            hostname: sn-hackers-web.${{ inputs.environment }}.preview.cb-demos.io
             config:
               fmKey: ${{ vars.FM_TOKEN }}
-              apiUrl: https://sd-hackers-api.${{ inputs.environment }}.preview.cb-demos.io/api
-              authUrl: https://sd-hackers-auth.${{ inputs.environment }}.preview.cb-demos.io
+              apiUrl: https://sn-hackers-api.${{ inputs.environment }}.preview.cb-demos.io/api
+              authUrl: https://sn-hackers-auth.${{ inputs.environment }}.preview.cb-demos.io
               useVPC: false
               fmInstance: cloudbees.io
       - name: Register deployed artifact
@@ -53,7 +53,7 @@ jobs:
         with:
           content: |-
             ## Deployed environment
-            [Dev frontend](https://sd-hackers-web.${{ inputs.environment }}.preview.cb-demos.io/)
+            [Dev frontend](https://sn-hackers-web.${{ inputs.environment }}.preview.cb-demos.io/)
 
             Running ${{ inputs.artifact-url }}
           format: MARKDOWN
