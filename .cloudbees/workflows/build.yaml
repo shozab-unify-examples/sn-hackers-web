@@ -34,11 +34,11 @@ jobs:
             ${{ steps.RunUnitTest.outputs.CODE_COVERAGE }}
           format: MARKDOWN
   build:
-    uses: cb-golden-demo-org/sd-hackers-workflows/container-build.yaml
+    uses: shozab-unify-examples/sn-hackers-workflows/container-build.yaml
     vars: inherit
     secrets: inherit
     with:
       appName: hackers-web
       versionStart: "1.0"
-      repo: cb-golden-demo-org/sd-hackers-web
+      repo: shozab-unify-examples/sn-hackers-web
     needs: test
